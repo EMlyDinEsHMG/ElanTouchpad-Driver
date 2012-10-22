@@ -1,0 +1,25 @@
+ElanTech Touchpad Driver for Mac OSX
+
+
+This is the driver implementation for the Elan Touchpad based on the source code of the Linux(arjan opmeer) and ideas from the VoodooPS2 & Apple Sources. For now, it is working only with the V3 Hardware of Elan Touchpad only which I have in my Asus Notebook. Most of the code has been hard coded to the packet format of the V3 Hardware.
+
+
+Features working in my driver:
+
+* Works as Normal Mouse
+* Single, Two and Three Finger Tapping
+* Corner Tapping
+* Two Finger Zoom and Rotations
+  Pinch Zoom
+  Circular and Arc Rotations
+* Three Finger Swipe
+* Scrolling
+  Two Finger - Horizontal and Vertical Scrolling
+  one Finger - Edge Scrolling with Circular
+* Two and Three Finger Double/Tripe taps for enabling/disabling features
+* Two and Three Finger Press
+* Dragging
+  Tap to drag with Finger tap release
+  Single Finger Hold Drag like we do in normal mouse
+* Ignoring Accidental Input with little Palm Checking
+* Using Mouse button to Enable/Disable the touchpad
