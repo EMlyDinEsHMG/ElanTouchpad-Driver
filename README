@@ -1,7 +1,7 @@
 ElanTech Touchpad Driver for Mac OSX
 
 
-This is the driver implementation for the Elan Touchpad based on the source code of the Linux(arjan opmeer) and ideas from the VoodooPS2 & Apple Sources. For now, it is working only with the V3 Hardware of Elan Touchpad only which I have in my Asus Notebook. Most of the code has been hard coded to the packet format of the V3 Hardware.
+This is the driver implementation for the Elan Touchpad to Mac OSX based on the source code of the Linux(arjan opmeer) and ideas from the VoodooPS2 & Apple Sources. For now, it is working only with the V3 Hardware of Elan Touchpad which I have in my Asus Notebook. Most of the code has been hard coded to the packet format of the V3 Hardware.
 
 
 Features working in my driver:
