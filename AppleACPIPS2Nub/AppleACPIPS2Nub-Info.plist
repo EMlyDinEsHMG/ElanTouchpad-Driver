@@ -24,30 +24,44 @@
 	<string>1.6.1</string>
 	<key>IOKitPersonalities</key>
 	<dict>
-		<key>ApplePS2Controller</key>
+		<key>ACPI PS/2 Nub</key>
 		<dict>
 			<key>CFBundleIdentifier</key>
 			<string>com.apple.${PRODUCT_NAME:rfc1034identifier}</string>
 			<key>IOClass</key>
-			<string>ApplePS2Controller</string>
+			<string>AppleACPIPS2Nub</string>
 			<key>IONameMatch</key>
-			<string>ps2controller</string>
+			<array>
+				<string>PNP0303</string>
+				<string>PNP030B</string>
+			</array>
+			<key>IOProbeScore</key>
+			<integer>1000</integer>
 			<key>IOProviderClass</key>
-			<string>IOPlatformDevice</string>
+			<string>IOACPIPlatformDevice</string>
+			<key>MouseNameMatch</key>
+			<array>
+				<string>PNP0F03</string>
+				<string>PNP0F0B</string>
+				<string>PNP0F13</string>
+				<string>PNP0F0E</string>
+			</array>
 		</dict>
 	</dict>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2012 EMlyDinEsHMG. All rights reserved.</string>
 	<key>OSBundleLibraries</key>
 	<dict>
+		<key>com.apple.iokit.IOACPIFamily</key>
+		<string>1.0d1</string>
 		<key>com.apple.kpi.iokit</key>
 		<string>7.0</string>
 		<key>com.apple.kpi.libkern</key>
 		<string>8.0d0</string>
-		<key>com.apple.kpi.mach</key>
-		<string>8.0d0</string>
+		<key>com.apple.kpi.unsupported</key>
+		<string>8.0.0b1</string>
 	</dict>
 	<key>OSBundleRequired</key>
-	<string>Console</string>
+	<string>Root</string>
 </dict>
 </plist>

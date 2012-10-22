@@ -24,22 +24,26 @@
 	<string>1.6.1</string>
 	<key>IOKitPersonalities</key>
 	<dict>
-		<key>ApplePS2Controller</key>
+		<key>ApplePS2Keyboard</key>
 		<dict>
 			<key>CFBundleIdentifier</key>
 			<string>com.apple.${PRODUCT_NAME:rfc1034identifier}</string>
 			<key>IOClass</key>
-			<string>ApplePS2Controller</string>
-			<key>IONameMatch</key>
-			<string>ps2controller</string>
+			<string>ApplePS2Keyboard</string>
 			<key>IOProviderClass</key>
-			<string>IOPlatformDevice</string>
+			<string>ApplePS2KeyboardDevice</string>
+			<key>Make capslock into control</key>
+			<false/>
+			<key>Swap alt and windows key</key>
+			<true/>
 		</dict>
 	</dict>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2012 EMlyDinEsHMG. All rights reserved.</string>
 	<key>OSBundleLibraries</key>
 	<dict>
+		<key>com.apple.iokit.IOHIDFamily</key>
+		<string>1.0b1</string>
 		<key>com.apple.kpi.iokit</key>
 		<string>7.0</string>
 		<key>com.apple.kpi.libkern</key>

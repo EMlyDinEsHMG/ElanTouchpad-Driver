@@ -17,37 +17,16 @@
 	<key>CFBundlePackageType</key>
 	<string>KEXT</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.6</string>
+	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.6.1</string>
+	<string>1</string>
 	<key>IOKitPersonalities</key>
-	<dict>
-		<key>ApplePS2Controller</key>
-		<dict>
-			<key>CFBundleIdentifier</key>
-			<string>com.apple.${PRODUCT_NAME:rfc1034identifier}</string>
-			<key>IOClass</key>
-			<string>ApplePS2Controller</string>
-			<key>IONameMatch</key>
-			<string>ps2controller</string>
-			<key>IOProviderClass</key>
-			<string>IOPlatformDevice</string>
-		</dict>
-	</dict>
+	<dict/>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2012 EMlyDinEsHMG. All rights reserved.</string>
+	<string>Copyright © 2012 Apple. All rights reserved.</string>
 	<key>OSBundleLibraries</key>
-	<dict>
-		<key>com.apple.kpi.iokit</key>
-		<string>7.0</string>
-		<key>com.apple.kpi.libkern</key>
-		<string>8.0d0</string>
-		<key>com.apple.kpi.mach</key>
-		<string>8.0d0</string>
-	</dict>
-	<key>OSBundleRequired</key>
-	<string>Console</string>
+	<dict/>
 </dict>
 </plist>
