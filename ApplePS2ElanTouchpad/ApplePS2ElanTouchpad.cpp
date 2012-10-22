@@ -311,6 +311,16 @@ ApplePS2ElanTouchPad::probe( IOService * provider, SInt32 * score )
                             swipeDownAction = tmpUI64;
                             tmpUI64 = 0;
                         }
+                        else if(!strncmp(dictKey->getCStringNoCopy(),"ThreeFIngerSwipeLeftAction", strlen(tmpStr)))
+                        {
+                            swipeLeftAction = tmpUI64;
+                            tmpUI64 = 0;
+                        }
+                        else if(!strncmp(dictKey->getCStringNoCopy(),"ThreeFingerSwipeRightAction", strlen(tmpStr)))
+                        {
+                            swipeRightAction = tmpUI64;
+                            tmpUI64 = 0;
+                        }
 
                         //OSSymbol *tmpConfSymb = OSDynamicCast(OSSymbol, getProperty("Preferences"));
                         //removeProperty(tmpConfSymb);
@@ -2131,9 +2141,50 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
         else if(touchmode == MODE_MUL_TOUCH)
         {
             if(swipeLeftDone)
-                _device->dispatchPS2Notification(kPS2C_SwipeLeft);
+            {
+                if(swipeLeftAction == 0)
+                    _device->dispatchPS2Notification(kPS2C_SwipeRight);
+                else if(swipeLeftAction == 1)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_1);
+                else if(swipeLeftAction == 2)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_2);
+                else if(swipeLeftAction == 3)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_3);
+                else if(swipeLeftAction == 4)//Notification centre
+                {
+                    boundsABS.x = _xmax-50;
+                    boundsABS.y = 25;
+                    
+                    dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x1, true, 0, 30, 160, 0, now);
+                    
+                }
+                else if(swipeLeftAction == 5)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_4);
+
+            }
             else if(swipeRightDone)
-                _device->dispatchPS2Notification(kPS2C_SwipeRight);
+            {
+                
+                    if(swipeRightAction == 0)
+                        _device->dispatchPS2Notification(kPS2C_SwipeRight);
+                    else if(swipeRightAction == 1)
+                        _device->dispatchPS2Notification(kPS2C_SwipeAction_1);
+                    else if(swipeRightAction == 2)
+                        _device->dispatchPS2Notification(kPS2C_SwipeAction_2);
+                    else if(swipeRightAction == 3)
+                        _device->dispatchPS2Notification(kPS2C_SwipeAction_3);
+                    else if(swipeRightAction == 4)//Notification centre
+                    {
+                        boundsABS.x = _xmax-50;
+                        boundsABS.y = 25;
+                        
+                        dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x1, true, 0, 30, 160, 0, now);
+                        
+                    }
+                    else if(swipeRightAction == 5)
+                        _device->dispatchPS2Notification(kPS2C_SwipeAction_4);
+                
+            }
             else if(swipeDownDone)
             {
                 if(swipeDownAction == 0 || swipeDownAction == 1)
@@ -2150,7 +2201,8 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                     dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x1, true, 0, 30, 160, 0, now);
 
                 }
-
+                else if(swipeDownAction == 5)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_4);
             }
             else if(swipeUpDone)
             {
@@ -2168,7 +2220,8 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                     dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x1, true, 0, 30, 160, 0, now);
                     
                 }
-
+                else if(swipeUpAction == 5)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_4);
             }
             
                 swipeLeftDone = swipeRightDone = swipeUpDone = false;

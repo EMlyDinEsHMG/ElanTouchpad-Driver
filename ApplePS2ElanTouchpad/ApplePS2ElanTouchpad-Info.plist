@@ -70,6 +70,10 @@
 				<integer>0</integer>
 				<key>ThreeFingerSwipeUpAction</key>
 				<integer>0</integer>
+				<key>ThreeFIngerSwipeLeftAction</key>
+				<integer>0</integer>
+				<key>ThreeFingerSwipeRightAction</key>
+				<integer>0</integer>
 				<key>ThreeFingerSwipeDownAction</key>
 				<integer>0</integer>
 			</dict>

@@ -200,7 +200,7 @@ private:
     int hgsscrollCounter, hlsscrollCounter, vgsscrollCounter, vlsscrollCounter, vScroll, hScroll;
     int  zoomXDiff, zoomYDiff, rotateXStart, rotateYStart, rotateXCounter, rotateYCounter, partialRotateR, partialRotateL;
     int  centerx, centery, divisor, accidentalInputKeys;
-    UInt64 swipeUpAction, swipeDownAction ;
+    UInt64 swipeUpAction, swipeDownAction, swipeLeftAction, swipeRightAction ;
    
     /*
      * The base position for one finger, v4 hardware

@@ -1109,9 +1109,28 @@ void ApplePS2Keyboard::receiveMouseTouchpadNotifications(UInt32 data)
                                   /*direction*/ false,
                                   /*timeStamp*/ now );
             break;
-        //For future
-        case kPS2C_SwipeAction_4:
+            
+        case kPS2C_SwipeAction_4://Switching Desktop Left Cntrl + Right Arrow
+            dispatchKeyboardEvent( 59,
+                                  /*direction*/ true,
+                                  /*timeStamp*/ now );
+            clock_get_uptime((uint64_t *)&now);
+            dispatchKeyboardEvent( 124,
+                                  /*direction*/ true,
+                                  /*timeStamp*/ now );
+            clock_get_uptime((uint64_t *)&now);
+            dispatchKeyboardEvent( 124,
+                                  /*direction*/ false,
+                                  /*timeStamp*/ now );
+            clock_get_uptime((uint64_t *)&now);
+            dispatchKeyboardEvent( 59,
+                                  /*direction*/ false,
+                                  /*timeStamp*/ now );
+
             break;
+            
+        //For future
+
         case kPS2C_SwipeAction_5:
             break;
         case kPS2C_SwipeAction_6:
