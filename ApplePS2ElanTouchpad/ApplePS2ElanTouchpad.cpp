@@ -159,7 +159,7 @@ ApplePS2ElanTouchPad::probe( IOService * provider, SInt32 * score )
     if (!super::probe(provider, score)) return 0;
     
     //Plz don't remove below line, I've worked really hard and deserve to be on this driver log
-    IOLog("ElanTech Touchpad driver v1.6.8 by EMlyDinEsHMG (c) 2012 \n");
+    IOLog("ElanTech Touchpad driver v1.6.8 by EMlyDinEsHMG (c) 2012\n");
 
     //Detecting the Presence of Elan Touchpad
     //
