@@ -187,7 +187,7 @@ private:
 
     bool clicking, dragging, draglock, dragReleased, dragStarted,tempDisableCornerTaps, dragged;
     bool _jitter, _corners,_threeFingTap, _twoFingDTap;
-	bool hscroll, scroll, TwoFingerScroll, fingersPressed;
+	bool hscroll, scroll, TwoFingerScroll, fingersPressed, threeFingerMode;
     bool rbtn, lbtnDrag,buttonTriggered, midBtn, trackpadStarted, circularStarted, dragPressure;;
     bool swipeDownDone, swipeUpDone, swipeLeftDone, swipeRightDone, zoomDone, zoomOut, zoomIn;
     bool cornerTapped, corner, cornerTopLeft, cornerBottomLeft, cornerTopRight, cornerBottomRight;

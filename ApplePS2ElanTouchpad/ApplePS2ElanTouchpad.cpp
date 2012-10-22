@@ -112,7 +112,7 @@ bool ApplePS2ElanTouchPad::init( OSDictionary * properties )
     lbtnDrag = false;
     rbtn = false;
     midBtn = false;
-    
+    threeFingerMode = false;
     TwoFingerScroll = false;
     circularStarted  = false;
     tempDisableCornerTaps = false;
@@ -159,7 +159,7 @@ ApplePS2ElanTouchPad::probe( IOService * provider, SInt32 * score )
     if (!super::probe(provider, score)) return 0;
     
     //Plz don't remove below line, I've worked really hard and deserve to be on this driver log
-    IOLog("ElanTech Touchpad driver v1.6.1 by EMlyDinEsHMG (c) 2012 \n");
+    IOLog("ElanTech Touchpad driver v1.6.8 by EMlyDinEsHMG (c) 2012 \n");
 
     //Detecting the Presence of Elan Touchpad
     //
@@ -1801,6 +1801,7 @@ void ApplePS2ElanTouchPad::Elantech_report_absolute_v3(int packet_type, unsigned
         //I'm using this Pressure 0 reported packet stream for invoking the functions
         //to the respective gesture
     {
+        IOLog("Elan: Pressure %d\n",pressure);
         Process_End_functions(packet_type, packets);
     }
     
@@ -1832,7 +1833,8 @@ void ApplePS2ElanTouchPad::Elantech_report_absolute_v3(int packet_type, unsigned
         
     }
     ////////////////// Two Fingers Touch Tracking/////////////////////
-    else if(fingers == 2 && !_disableTouch)
+    else if(fingers == 2 && !_disableTouch && !threeFingerMode)
+                                            //Preventing accidental two finger touches duing three finger
     {
                 
         if (packet_type == PACKET_V3_HEAD) {
@@ -1911,6 +1913,8 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
             touchmode = MODE_ZOOM;
         }
     
+    //Resetting for Immediate Pinch zoom to work
+    zoomIn = zoomOut  = false;
     //////// Stopping processing the packet stream becoz we have generated the output so no need to process
     if(rotateCirLeft || rotateCirRight || fingersPressed)
         _StartTracking = false;
@@ -1943,7 +1947,6 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
         touchmode = MODE_MOVE;//Setting this mode as default
         
         cornerTapped = cornerTopLeft = cornerBottomLeft = cornerTopRight = cornerBottomRight = false;
-        tempDisableCornerTaps = false;
 
     }
     /**********Single Tap/Clicking/Hard Buttons/Drag Start**************/
@@ -2133,7 +2136,6 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
             ScrollDelayCount = 0;
             holdDragDelayCount = 0;
             touchmode = MODE_MOVE;//Setting this mode as default
-            tempDisableCornerTaps = false;
             
         }
         /******** Three Fingers Swiping****************/
@@ -2143,7 +2145,7 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
             if(swipeLeftDone)
             {
                 if(swipeLeftAction == 0)
-                    _device->dispatchPS2Notification(kPS2C_SwipeRight);
+                    _device->dispatchPS2Notification(kPS2C_SwipeLeft);
                 else if(swipeLeftAction == 1)
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_1);
                 else if(swipeLeftAction == 2)
@@ -2224,12 +2226,13 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_4);
             }
             
-                swipeLeftDone = swipeRightDone = swipeUpDone = false;
             //CleanUp and reset
             lastTouchtime = 0;
             curTouchtime = 0;
             track = 0;
             ScrollDelayCount = 0;
+            swipeLeftDone = swipeRightDone = swipeUpDone = false;
+
         }
         /******** Three Fingers Tapping****************/
     
@@ -2396,8 +2399,9 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
             ScrollDelayCount = 0;
             
         }
+    
         //CleanUp and reset
-        else if(curTouchtime > maxclicktime && ScrollDelayCount>=9) {
+        if(curTouchtime > maxclicktime && ScrollDelayCount>=9) {
             curTouchtime = 0;
             lastTouchtime = 0;
             track = 0;
@@ -2406,11 +2410,16 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
             taps = 0;
             
             touchmode = MODE_MOVE;//Setting this mode as default
-            tempDisableCornerTaps = false;
             dispatchScrollWheelEvent(0, 0, 0, now);
             dispatchRelativePointerEvent(0, 0, buttons, now);
+            IOLog("Elan: CleanUp\n");
         }
-        
+    
+    //Additional must CleanUp at the Pressure 0 Stream 
+        swipeLeftDone = swipeRightDone = swipeUpDone = false;
+        threeFingerMode = false;
+        TwoFingerScroll = false;
+    
     }
 
 
@@ -2421,11 +2430,12 @@ void ApplePS2ElanTouchPad::Process_Threefingers_touch(int midfinger_x, int midfi
         int xdiff = 0, ydiff = 0;
     
     
-    if(track == 0)
+    if(!threeFingerMode)//For the first time we Intialize
     {
         _lastX = _lastY = 0;
         _initX = midfinger_x;
         _initY = midfinger_y;
+        threeFingerMode = true;
     }
     
     //Differneces in the Touch coordinates used for the tracking the position
@@ -2445,11 +2455,6 @@ void ApplePS2ElanTouchPad::Process_Threefingers_touch(int midfinger_x, int midfi
         if(tmp_yDiff<0)
             tmp_yDiff = 0 - tmp_yDiff;
     
-    if(xdiff<0)
-        xdiff = 0 - xdiff;
-    if(ydiff<0)
-        ydiff = 0 - ydiff;
-    
     
         AbsoluteTime now;
         
@@ -2459,9 +2464,13 @@ void ApplePS2ElanTouchPad::Process_Threefingers_touch(int midfinger_x, int midfi
             clock_get_uptime((uint64_t*)&now);
         #endif
 
-    DEBUG_LOG("Elan: Three Finger Touch X1 %d Y1 %d xdiff %d ydiff %d,TmpXD %d, TmpYD %d, pressure %d, width %d, track %d\n",midfinger_x,midfinger_y,xdiff,ydiff,tmp_xDiff,tmp_yDiff,pressure,width,track);
+        _lastX = midfinger_x;
+        _lastY = midfinger_y;
+    
+    
+    DEBUG_LOG("Elan: Three Finger Touch X1 %d Y1 %d xdiff %d ydiff %d,TmpXD %d, TmpYD %d, pressure %d, width %d, track %d Scroll %d\n",midfinger_x,midfinger_y,xdiff,ydiff,tmp_xDiff,tmp_yDiff,pressure,width,track,ScrollDelayCount);
 
-        if(ScrollDelayCount>35 && tmp_xDiff<25 && tmp_yDiff<25 /*xdiff<30 && xdiff>-30 && ydiff<30 && ydiff>-30*/)
+        if(ScrollDelayCount>35 && tmp_xDiff<25 && tmp_yDiff<25)
         {
             touchmode = MODE_THREE_FING_PRESS;
             
@@ -2474,50 +2483,44 @@ void ApplePS2ElanTouchPad::Process_Threefingers_touch(int midfinger_x, int midfi
             dispatchRelativePointerEvent(0, 25, 0, now);//For Showing setting change with pointer movement
             
             fingersPressed =true;
-            return;
         }
         
-        else if((midfinger_x - _lastX)<0 && xdiff>ydiff && tmp_xDiff>30 && width>7 && pressure>100
-                && ScrollDelayCount>7 && !track == 0 && _enableSwipeLR && taps == 0)
+        else if((_initX - midfinger_x)> 0 && tmp_xDiff>tmp_yDiff && tmp_xDiff>50 && width>7 && pressure>100
+                && ScrollDelayCount>7 && !track == 0 && _enableSwipeLR && taps == 0
+                && touchmode != MODE_THREE_FING_PRESS)
         {
             swipeLeftDone = true;
             swipeDownDone = swipeUpDone = swipeRightDone = false;
             touchmode = MODE_MUL_TOUCH;
             return;
         }
-        else if((midfinger_x - _lastX)>0 && xdiff>ydiff && tmp_xDiff>30  && width>7 && pressure>100
-                && ScrollDelayCount>7 && !track == 0 && _enableSwipeLR && taps == 0)
+        else if((_initX - midfinger_x)< 0 && tmp_xDiff>tmp_yDiff && tmp_xDiff>50  && width>7 && pressure>100
+                && ScrollDelayCount>7 && !track == 0 && _enableSwipeLR && taps == 0
+                && touchmode != MODE_THREE_FING_PRESS)
         {
             swipeRightDone = true;
             swipeDownDone = swipeLeftDone = swipeUpDone = false;
             touchmode = MODE_MUL_TOUCH;
             return;
         }
-        else if((midfinger_y - _lastY)>0 && xdiff<ydiff && tmp_yDiff>30 && width>7 && pressure>100
-                && ScrollDelayCount>7 && !track == 0 && _enableSwipeUpDwn && taps == 0)
+        else if( (_initY - midfinger_y)< 0 && tmp_yDiff>tmp_xDiff && tmp_yDiff>50 && width>7 && pressure>100
+                && ScrollDelayCount>7 && !track == 0 && _enableSwipeUpDwn && taps == 0
+                && touchmode != MODE_THREE_FING_PRESS)
         {
             swipeDownDone = true;
             swipeUpDone = swipeLeftDone = swipeRightDone = false;
             touchmode = MODE_MUL_TOUCH;
             return;
         }
-        else if((midfinger_y - _lastY)<0 && xdiff<ydiff && tmp_yDiff>30 && width>7 && pressure>100
-                && ScrollDelayCount>7 && !track == 0 && _enableSwipeUpDwn && taps == 0)
+        else if((_initY - midfinger_y)> 0 && tmp_yDiff>tmp_xDiff && tmp_yDiff>50 && width>7 && pressure>100
+                && ScrollDelayCount>7 && !track == 0 && _enableSwipeUpDwn && taps == 0
+                && touchmode != MODE_THREE_FING_PRESS)
         {
             swipeUpDone = true;
             swipeDownDone = swipeLeftDone = swipeRightDone = false;
             touchmode = MODE_MUL_TOUCH;//Just for Preventing other modes from taking over
             return;
         }
-        
-        _lastX = midfinger_x;
-        _lastY = midfinger_y;
-        
-        _xdiff = xdiff;
-        _ydiff = ydiff;
-        
-        if(track == 0)
-            _xdiff = _ydiff = 0;
         
         track = 1;
         

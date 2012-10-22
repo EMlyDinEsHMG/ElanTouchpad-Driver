@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.6.1</string>
+	<string>1.6.8</string>
 	<key>IOKitPersonalities</key>
 	<dict>
 		<key>ACPI PS/2 Nub</key>

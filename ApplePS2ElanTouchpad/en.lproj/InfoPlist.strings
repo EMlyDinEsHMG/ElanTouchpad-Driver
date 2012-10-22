@@ -1,5 +1,5 @@
 /* Localized versions of Info.plist keys */
 CFBundleName = "ElanTech Touchpad (Hardware Version 3) Driver for Mac OSX";
-CFBundleShortVersionString = "1.6.1";
-CFBundleGetInfoString = "1.6.1, Copyright Apple Computer, Inc. 2002-2003, ©Copyright EMlyDinEsHMG 2012";
+CFBundleShortVersionString = "1.6.8";
+CFBundleGetInfoString = "1.6.8, Copyright Apple Computer, Inc. 2002-2003, ©Copyright EMlyDinEsHMG 2012";
 NSHumanReadableCopyright = "Copyright Apple Computer, Inc. 2002-2003, ©Copyright EMlyDinEsHMG 2012";
