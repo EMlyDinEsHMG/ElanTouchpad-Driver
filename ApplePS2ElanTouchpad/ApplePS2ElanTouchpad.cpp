@@ -1961,7 +1961,9 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
         {
             DEBUG_LOG("Elan: CurTouchTime %lld, MaxClickTime %lld Buttons %d Pressure %d, Delay %d, Tap %d\n",curTouchtime, maxclicktime,buttons,pressure,ScrollDelayCount,tapDragDelayCount);
             
-            if(swipeDownDone)//Releasing the Command Key on Tab+Command after swipe down
+            if((swipeDownDone && (swipeDownAction == 0 || swipeDownAction == 1)) ||
+               (swipeLeftDone && (swipeLeftAction == 1)) || (swipeRightDone && (swipeRightAction == 1)) ||
+               (swipeUpDone && (swipeUpAction == 1)))//Releasing the Command Key on Tab+Command after swipe down
             {
                 _device->dispatchPS2Notification(kPS2C_ReleaseKey);
                 swipeDownDone = false;
@@ -2162,7 +2164,8 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                     boundsABS.y = 25;
                     
                     dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x1, true, 0, 30, 160, 0, now);
-                    
+                    dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x0, true, 0, 30, 160, 0, now);
+
                 }
                 else if(swipeLeftAction == 5)
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_4);
@@ -2189,7 +2192,8 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                         boundsABS.y = 25;
                         
                         dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x1, true, 0, 30, 160, 0, now);
-                        
+                        dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x0, true, 0, 30, 160, 0, now);
+
                     }
                     else if(swipeRightAction == 5)
                         _device->dispatchPS2Notification(kPS2C_SwipeAction_4);
@@ -2212,6 +2216,8 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                     boundsABS.y = 25;
                     
                     dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x1, true, 0, 30, 160, 0, now);
+                    dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x0, true, 0, 30, 160, 0, now);
+
 
                 }
                 else if(swipeDownAction == 5)
@@ -2227,7 +2233,7 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                 if(swipeUpAction == 0 || swipeUpAction == 2)
                     _device->dispatchPS2Notification(kPS2C_SwipeUp);
                 else if(swipeUpAction == 1)
-                    _device->dispatchPS2Notification(kPS2C_SwipeAction_2);
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_1);
                 else if(swipeUpAction == 3)
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_3);
                 else if(swipeUpAction == 4)//Notification center
@@ -2236,7 +2242,8 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                     boundsABS.y = 25;
                     
                     dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x1, true, 0, 30, 160, 0, now);
-                    
+                    dispatchAbsolutePointerEvent(&boundsABS, &boundsPAD, 0x0, true, 0, 30, 160, 0, now);
+
                 }
                 else if(swipeUpAction == 5)
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_4);

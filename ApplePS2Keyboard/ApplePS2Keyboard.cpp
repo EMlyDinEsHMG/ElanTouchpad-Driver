@@ -1177,6 +1177,7 @@ void ApplePS2Keyboard::receiveMouseTouchpadNotifications(UInt32 data)
             //Invoking Num Lock LED
             setNumLockFeedback(_numKeypadLocked);
             _numKeypadLocked = !_numKeypadLocked;
+            break;
             
         default:
             break;
