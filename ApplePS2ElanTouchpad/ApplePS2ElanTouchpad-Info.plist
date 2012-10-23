@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>KEXT</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.6</string>
+	<string>1.7</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1.6.8</string>
+	<string>1.7</string>
 	<key>IOKitPersonalities</key>
 	<dict>
 		<key>Elan Touchpad</key>
@@ -76,6 +76,8 @@
 				<integer>0</integer>
 				<key>ThreeFingerSwipeDownAction</key>
 				<integer>0</integer>
+				<key>KeyBoardNumLockOn</key>
+				<false/>
 			</dict>
 		</dict>
 	</dict>

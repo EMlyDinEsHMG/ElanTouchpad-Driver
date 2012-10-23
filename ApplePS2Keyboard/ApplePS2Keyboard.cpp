@@ -172,6 +172,7 @@ bool ApplePS2Keyboard::start(IOService * provider)
 
   setLEDs(_ledState);
 
+    
   //
   // Enable the keyboard clock (should already be so), the keyboard IRQ line,
   // and the keyboard Kscan -> scan code translation mode.
@@ -1068,7 +1069,7 @@ void ApplePS2Keyboard::receiveMouseTouchpadNotifications(UInt32 data)
             break;
             
         //Three Finger Swipe Action Options
-        case kPS2C_SwipeAction_1://Applications Switch Tab + cmd
+        case kPS2C_SwipeAction_1://Switch Applications Switch Tab + cmd
             dispatchKeyboardEvent( _commandKey,
                                   /*direction*/ true,
                                   /*timeStamp*/ now );
@@ -1092,7 +1093,7 @@ void ApplePS2Keyboard::receiveMouseTouchpadNotifications(UInt32 data)
                                   /*timeStamp*/ now );
 
             break;
-        case kPS2C_SwipeAction_3://Dashboard Left Cntrl + Arrow
+        case kPS2C_SwipeAction_3://Dashboard & Switching Desktop Left Cntrl + Arrow
             dispatchKeyboardEvent( 59,
                                   /*direction*/ true,
                                   /*timeStamp*/ now );
@@ -1129,12 +1130,53 @@ void ApplePS2Keyboard::receiveMouseTouchpadNotifications(UInt32 data)
 
             break;
             
-        //For future
 
-        case kPS2C_SwipeAction_5:
+        case kPS2C_SwipeAction_5://Show Application Windows Control + Down Arrow
+            dispatchKeyboardEvent( 59,
+                                  /*direction*/ true,
+                                  /*timeStamp*/ now );
+            clock_get_uptime((uint64_t *)&now);
+            dispatchKeyboardEvent( 125,
+                                  /*direction*/ true,
+                                  /*timeStamp*/ now );
+            clock_get_uptime((uint64_t *)&now);
+            dispatchKeyboardEvent( 125,
+                                  /*direction*/ false,
+                                  /*timeStamp*/ now );
+            clock_get_uptime((uint64_t *)&now);
+            dispatchKeyboardEvent( 59,
+                                  /*direction*/ false,
+                                  /*timeStamp*/ now );
+            
+
             break;
-        case kPS2C_SwipeAction_6:
+        case kPS2C_SwipeAction_6://Mission Control
+            dispatchKeyboardEvent( 160,
+                                  /*direction*/ true,
+                                  /*timeStamp*/ now );
+            
+            clock_get_uptime((uint64_t *)&now);
+            dispatchKeyboardEvent( 160,
+                                  /*direction*/ false,
+                                  /*timeStamp*/ now );
+            
+
             break;
+            
+            //For Future
+        case kPS2C_SwipeAction_7:
+            break;
+        case kPS2C_SwipeAction_8:
+            break;
+        case kPS2C_SwipeAction_9:
+            break;
+        case kPS2C_SwipeAction_10:
+            break;
+            
+        case kPS2C_NumLock:
+            //Invoking Num Lock LED
+            setNumLockFeedback(_numKeypadLocked);
+            _numKeypadLocked = !_numKeypadLocked;
             
         default:
             break;

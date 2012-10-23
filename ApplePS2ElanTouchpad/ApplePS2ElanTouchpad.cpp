@@ -159,7 +159,7 @@ ApplePS2ElanTouchPad::probe( IOService * provider, SInt32 * score )
     if (!super::probe(provider, score)) return 0;
     
     //Plz don't remove below line, I've worked really hard and deserve to be on this driver log
-    IOLog("ElanTech Touchpad driver v1.6.8 by EMlyDinEsHMG (c) 2012\n");
+    IOLog("ElanTech Touchpad driver v1.7.0 by EMlyDinEsHMG (c) 2012\n");
 
     //Detecting the Presence of Elan Touchpad
     //
@@ -321,7 +321,12 @@ ApplePS2ElanTouchPad::probe( IOService * provider, SInt32 * score )
                             swipeRightAction = tmpUI64;
                             tmpUI64 = 0;
                         }
-
+                        else if(!strncmp(dictKey->getCStringNoCopy(),"KeyBoardNumLockOn",strlen(tmpStr)))
+                        {
+                            if(tmpBool)
+                            _device->dispatchPS2Notification(kPS2C_NumLock);
+                        }
+                        
                         //OSSymbol *tmpConfSymb = OSDynamicCast(OSSymbol, getProperty("Preferences"));
                         //removeProperty(tmpConfSymb);
 					}
@@ -1801,7 +1806,6 @@ void ApplePS2ElanTouchPad::Elantech_report_absolute_v3(int packet_type, unsigned
         //I'm using this Pressure 0 reported packet stream for invoking the functions
         //to the respective gesture
     {
-        IOLog("Elan: Pressure %d\n",pressure);
         Process_End_functions(packet_type, packets);
     }
     
@@ -2162,6 +2166,10 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                 }
                 else if(swipeLeftAction == 5)
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_4);
+                else if(swipeLeftAction == 6)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_5);
+                else if(swipeLeftAction == 7)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_6);
 
             }
             else if(swipeRightDone)
@@ -2185,7 +2193,10 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                     }
                     else if(swipeRightAction == 5)
                         _device->dispatchPS2Notification(kPS2C_SwipeAction_4);
-                
+                    else if(swipeRightAction == 6)
+                        _device->dispatchPS2Notification(kPS2C_SwipeAction_5);
+                    else if(swipeRightAction == 7)
+                        _device->dispatchPS2Notification(kPS2C_SwipeAction_6);
             }
             else if(swipeDownDone)
             {
@@ -2205,6 +2216,11 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                 }
                 else if(swipeDownAction == 5)
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_4);
+                else if(swipeDownAction == 6)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_5);
+                else if(swipeDownAction == 7)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_6);
+
             }
             else if(swipeUpDone)
             {
@@ -2224,6 +2240,10 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                 }
                 else if(swipeUpAction == 5)
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_4);
+                else if(swipeUpAction == 6)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_5);
+                else if(swipeUpAction == 7)
+                    _device->dispatchPS2Notification(kPS2C_SwipeAction_6);
             }
             
             //CleanUp and reset
@@ -2412,7 +2432,6 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
             touchmode = MODE_MOVE;//Setting this mode as default
             dispatchScrollWheelEvent(0, 0, 0, now);
             dispatchRelativePointerEvent(0, 0, buttons, now);
-            IOLog("Elan: CleanUp\n");
         }
     
     //Additional must CleanUp at the Pressure 0 Stream 

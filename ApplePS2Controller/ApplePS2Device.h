@@ -339,6 +339,7 @@ enum touchpad {
     kPS2C_RotateRight,
     kPS2C_TwoFingersPress,
     kPS2C_ReleaseKey,
+    kPS2C_NumLock,
     kCommandKeyPos_0,
     kCommandKeyPos_1,
     kCommandKeyPos_2,
@@ -348,7 +349,12 @@ enum touchpad {
     kPS2C_SwipeAction_3,
     kPS2C_SwipeAction_4,
     kPS2C_SwipeAction_5,
-    kPS2C_SwipeAction_6
+    kPS2C_SwipeAction_6,
+    kPS2C_SwipeAction_7,
+    kPS2C_SwipeAction_8,
+    kPS2C_SwipeAction_9, 
+    kPS2C_SwipeAction_10
+
 };
 
 #endif /* !_APPLEPS2DEVICE_H */
