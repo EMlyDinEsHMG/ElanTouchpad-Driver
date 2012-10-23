@@ -133,6 +133,9 @@ bool ApplePS2ElanTouchPad::init( OSDictionary * properties )
     trackpadStarted = false;//Prevents UpdateProperties method being executed during startup
     zoomDone = false;
     swipeDownDone = false;
+    swipeUpDone  = false;
+    swipeLeftDone = false;
+    swipeRightDone = false;
     rotateDone = false;
     rotateMode = false;
     
@@ -1966,7 +1969,7 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
                (swipeUpDone && (swipeUpAction == 1)))//Releasing the Command Key on Tab+Command after swipe down
             {
                 _device->dispatchPS2Notification(kPS2C_ReleaseKey);
-                swipeDownDone = false;
+                swipeLeftDone = swipeRightDone = swipeDownDone = swipeUpDone =  false;
             }
             
             
@@ -2150,10 +2153,15 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
         {
             if(swipeLeftDone)
             {
+                swipeLeftDone = swipeRightDone = swipeDownDone = swipeUpDone =  false;
+
                 if(swipeLeftAction == 0)
                     _device->dispatchPS2Notification(kPS2C_SwipeLeft);
-                else if(swipeLeftAction == 1)
+                else if(swipeLeftAction == 1)//For Command key release on Cmd+Tab
+                {
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_1);
+                    swipeLeftDone = true;
+                }
                 else if(swipeLeftAction == 2)
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_2);
                 else if(swipeLeftAction == 3)
@@ -2177,11 +2185,15 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
             }
             else if(swipeRightDone)
             {
-                
+                swipeLeftDone = swipeRightDone = swipeDownDone = swipeUpDone =  false;
+   
                     if(swipeRightAction == 0)
                         _device->dispatchPS2Notification(kPS2C_SwipeRight);
                     else if(swipeRightAction == 1)
+                    {
+                        swipeRightDone = true;
                         _device->dispatchPS2Notification(kPS2C_SwipeAction_1);
+                    }
                     else if(swipeRightAction == 2)
                         _device->dispatchPS2Notification(kPS2C_SwipeAction_2);
                     else if(swipeRightAction == 3)
@@ -2204,8 +2216,13 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
             }
             else if(swipeDownDone)
             {
+                swipeLeftDone = swipeRightDone = swipeDownDone = swipeUpDone =  false;
+
                 if(swipeDownAction == 0 || swipeDownAction == 1)
+                {
                     _device->dispatchPS2Notification(kPS2C_SwipeDown);
+                    swipeDownDone = true;
+                }
                 else if(swipeDownAction == 2)
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_2);
                 else if(swipeDownAction == 3)
@@ -2230,10 +2247,15 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
             }
             else if(swipeUpDone)
             {
+                swipeLeftDone = swipeRightDone = swipeDownDone = swipeUpDone =  false;
+
                 if(swipeUpAction == 0 || swipeUpAction == 2)
                     _device->dispatchPS2Notification(kPS2C_SwipeUp);
                 else if(swipeUpAction == 1)
+                {
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_1);
+                    swipeUpDone = true;
+                }
                 else if(swipeUpAction == 3)
                     _device->dispatchPS2Notification(kPS2C_SwipeAction_3);
                 else if(swipeUpAction == 4)//Notification center
@@ -2258,8 +2280,8 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
             curTouchtime = 0;
             track = 0;
             ScrollDelayCount = 0;
-            swipeLeftDone = swipeRightDone = swipeUpDone = false;
-
+            touchmode = MODE_MOVE;//Reset to Default Mode
+            
         }
         /******** Three Fingers Tapping****************/
     
@@ -2442,7 +2464,6 @@ void ApplePS2ElanTouchPad::Process_End_functions(int packet_type, unsigned char 
         }
     
     //Additional must CleanUp at the Pressure 0 Stream 
-        swipeLeftDone = swipeRightDone = swipeUpDone = false;
         threeFingerMode = false;
         TwoFingerScroll = false;
     
@@ -2516,7 +2537,6 @@ void ApplePS2ElanTouchPad::Process_Threefingers_touch(int midfinger_x, int midfi
                 && touchmode != MODE_THREE_FING_PRESS)
         {
             swipeLeftDone = true;
-            swipeDownDone = swipeUpDone = swipeRightDone = false;
             touchmode = MODE_MUL_TOUCH;
             return;
         }
@@ -2525,7 +2545,6 @@ void ApplePS2ElanTouchPad::Process_Threefingers_touch(int midfinger_x, int midfi
                 && touchmode != MODE_THREE_FING_PRESS)
         {
             swipeRightDone = true;
-            swipeDownDone = swipeLeftDone = swipeUpDone = false;
             touchmode = MODE_MUL_TOUCH;
             return;
         }
@@ -2534,7 +2553,6 @@ void ApplePS2ElanTouchPad::Process_Threefingers_touch(int midfinger_x, int midfi
                 && touchmode != MODE_THREE_FING_PRESS)
         {
             swipeDownDone = true;
-            swipeUpDone = swipeLeftDone = swipeRightDone = false;
             touchmode = MODE_MUL_TOUCH;
             return;
         }
@@ -2543,8 +2561,7 @@ void ApplePS2ElanTouchPad::Process_Threefingers_touch(int midfinger_x, int midfi
                 && touchmode != MODE_THREE_FING_PRESS)
         {
             swipeUpDone = true;
-            swipeDownDone = swipeLeftDone = swipeRightDone = false;
-            touchmode = MODE_MUL_TOUCH;//Just for Preventing other modes from taking over
+            touchmode = MODE_MUL_TOUCH;
             return;
         }
         
